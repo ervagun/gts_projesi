@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQL Query Response</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css') }}"> 
+
+</head>
+<body>
+    <div class="container">
+        {% if not error %}
+            <div class="success">
+                <h2>Successful</h2>
+                <p>Your SQL query executed successfully.</p>
+                <p>{{response}}</p>
+                <p>You will be redirected to the home page in <span id="counter">3</span> second(s).</p>
+                <p><a href="/">Click here</a> to go back to the home page now.</p>
+            </div>
+        {% else %}
+            <div class="fail">
+                <h2> Failed</h2>
+                <p>There was an error executing your SQL query.</p>
+                <p>{{response}}</p>
+                <p>You will be redirected to the home page in <span id="counter">5</span> second(s).</p>
+                <p><a href="/">Click here</a> to go back to the home page now.</p>
+
+            </div>
+        {% endif %}
+    </div>
+    <script src="{{url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

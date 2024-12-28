@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css') }}"> 
+
+</head>
+<body>
+            <!-- Navigation bar -->
+            <nav style="padding: 1.5rem 6rem; font-size: 25px;" class="navbar navbar-expand-sm">
+                <a  style="font-size: 25px;" class="navbar-brand" href="/">GTS</a>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/add_data">Add Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/edit">Editor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">Search</a>
+                    </li>
+     
+                </ul>
+            </nav>
+    <div class="container">
+        <h1>Thesis Management System</h1>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#author"> Authors</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#topics"> Topics</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#university"> Universities</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#institute"> Institutes</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="author" class="tab-pane fade show active">
+                <h3>Authors</h3>
+                <!-- Persons List -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>FirstName</th>
+                            <th>Surname</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for author in authors %}
+                            <tr>
+                                <td>{{ author[1] }}</td>
+                                <td>{{ author[2] }}</td>
+                                <td>{{ author[3] }}</td>
+                                <td>
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#editPersonModal{{ author[0] }}">Edit</button>
+                                    <button class="btn btn-danger" data-toggle="modal" data-target="#deletePersonModal{{ author[0] }}">Delete</button>
+                                </td>
+                            </tr>
+                            <!-- Edit Person Modal -->
+                            <div class="modal fade" id="editPersonModal{{ author[0] }}" tabindex="-1" role="dialog" aria-labelledby="editPersonModalLabel{{ author[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editPersonModalLabel{{ author[0] }}">Edit Author</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/edit_author/{{ author[0] }}" method="post">
+                                                <!-- Form fields for editing person -->
+                                                <div class="form-group">
+                                                    <label class="form-label" for="title">Title:</label>
+                                                    <select class="form-control" id="title" name="title">
+                                                        <option value="Prof. Dr." {% if author[1] == "Prof. Dr." %}selected{% endif %}>Prof. Dr.</option>
+                                                        <option value="Prof." {% if author[1] == "Prof." %}selected{% endif %}>Prof.</option>
+                                                        <option value="Doctorate" {% if author[1] == "Doctorate" %}selected{% endif %}>Doctorate</option>
+                                                        <option value="Master" {% if author[1] == "Master" %}selected{% endif %}>Master</option>
+                                                        <option value="Specialization in Medicine" {% if author[1] == "Specialization in Medicine" %}selected{% endif %}>Specialization in Medicine</option>
+                                                        <option value="Lecturer" {% if author[1] == "Lecturer" %}selected{% endif %}>Lecturer</option>
+                                                        <option value="Researcher" {% if author[1] == "Researcher" %}selected{% endif %}>Researcher</option>
+                                                        <option value="Student" {% if author[1] == "Student" %}selected{% endif %}>Student</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="form-label" for="firstname">First Name:</label>
+                                                    <input class="form-control" type="text" id="firstname" name="firstname" value="{{ author[2] }}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="form-label" for="surname">Surname:</label>
+                                                    <input class="form-control" type="text" id="surname" name="surname" value="{{ author[3] }}">
+                                                </div>
+
+                                                <div class="form-submit">
+                                                    <input class="btn btn-primary" type="submit" value="Change">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Delete Person Modal -->
+                            <div class="modal fade" id="deletePersonModal{{ author[0] }}" tabindex="-1" role="dialog" aria-labelledby="deletePersonModalLabel{{ author[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deletePersonModalLabel{{ author[0] }}">Delete author</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete this author?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form action="/delete_author/{{ author[0] }}" method="post">
+                                                <input class="btn btn-danger" type="submit" value="Delete">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        
+            <div id="topics" class="tab-pane fade">
+                <h3>Topics</h3>
+                <!-- Topics List -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for topic in topics %}
+                            <tr>
+                                <td>{{ topic[1] }}</td>
+                                <td>
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#editTopicModal{{ topic[0] }}">Edit</button>
+                                    <button class="btn btn-danger" data-toggle="modal" data-target="#deleteTopicModal{{ topic[0] }}">Delete</button>
+                                </td>
+                            </tr>
+                            <!-- Edit Topic Modal -->
+                            <div class="modal fade" id="editTopicModal{{ topic[0] }}" tabindex="-1" role="dialog" aria-labelledby="editTopicModalLabel{{ topic[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editTopicModalLabel{{ topic[0] }}">Edit Topic</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/edit_topic/{{ topic[0] }}" method="post">
+                                                <!-- Form fields for editing topic -->
+                                                <div class="form-group">
+                                                    <label class="form-label" for="name">Name:</label>
+                                                    <input class="form-control" type="text" id="name" name="name" value="{{ topic[1] }}">
+                                                </div>
+
+                                                <div class="form-submit">
+                                                    <input class="btn btn-primary" type="submit" value="Change">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Delete Topic Modal -->
+                            <div class="modal fade" id="deleteTopicModal{{ topic[0] }}" tabindex="-1" role="dialog" aria-labelledby="deleteTopicModalLabel{{ topic[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteTopicModalLabel{{ topic[0] }}">Delete Topic</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete this topic?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form action="/delete_topic/{{ topic[0] }}" method="post">
+                                                <input class="btn btn-danger" type="submit" value="Delete">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="university" class="tab-pane fade">
+                <h3>Universities</h3>
+                <!-- Universities List -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Country</th>
+                            <th>Year</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for university in universities %}
+                            <tr>
+                                <td>{{ university[1] }}</td>
+                                <td>{{ university[2] }}</td>
+                                <td>{{ university[3] }}</td>
+                                <td>{{ university[4] }}</td>
+                                <td>
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#editUniversityModal{{ university[0] }}">Edit</button>
+                                    <button class="btn btn-danger" data-toggle="modal" data-target="#deleteUniversityModal{{ university[0] }}">Delete</button>
+                                </td>
+                            </tr>
+                            <!-- Edit University Modal -->
+                            <div class="modal fade" id="editUniversityModal{{ university[0] }}" tabindex="-1" role="dialog" aria-labelledby="editUniversityModalLabel{{ university[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editUniversityModalLabel{{ university[0] }}">Edit University</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/edit_university/{{ university[0] }}" method="post">
+                                                <!-- Form fields for editing university -->
+                                                <div class="form-group">
+                                                    <label class="form-label" for="name">Name:</label>
+                                                    <input class="form-control" type="text" id="name" name="name" value="{{ university[1] }}">
+                                                </div>
+
+                                                <div class="form-submit">
+                                                    <input class="btn btn-primary" type="submit" value="Change">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Delete University Modal -->
+                            <div class="modal fade" id="deleteUniversityModal{{ university[0] }}" tabindex="-1" role="dialog" aria-labelledby="deleteUniversityModalLabel{{ university[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteUniversityModalLabel{{ university[0] }}">Delete University</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete this university?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form action="/delete_university/{{ university[0] }}" method="post">
+                                                <input class="btn btn-danger" type="submit" value="Delete">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div id="institute" class="tab-pane fade">
+                <h3>Institutes</h3>
+                <!-- Institutes List -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>University</th>
+                            <th>Type</th>
+                            <th>Year</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for institute in institutes %}
+                            <tr>
+                                <td>{{ institute[1] }}</td>
+                                <td>{{ institute[3] }}</td>
+                                <td>{{ institute[4] }}</td>
+                                <td>{{ institute[5] }}</td>
+                                <td>
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#editInstituteModal{{ institute[0] }}">Edit</button>
+                                    <button class="btn btn-danger" data-toggle="modal" data-target="#deleteInstituteModal{{ institute[0] }}">Delete</button>
+                                </td>
+                            </tr>
+                            <!-- Edit Institute Modal -->
+                            <div class="modal fade" id="editInstituteModal{{ institute[0] }}" tabindex="-1" role="dialog" aria-labelledby="editInstituteModalLabel{{ institute[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editInstituteModalLabel{{ institute[0] }}">Edit Institute</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/edit_institute/{{ institute[0] }}" method="post">
+                                                <!-- Form fields for editing institute -->
+                                                <div class="form-group">
+                                                    <label class="form-label" for="name">Name:</label>
+                                                    <input class="form-control" type="text" id="name" name="name" value="{{ institute[1] }}">
+                                                </div>
+                                                    
+                                                <!--
+                                                <div class="form-group">
+                                                    <label class="form-label" for="university">University:</label>
+                                                    <select class="form-control" id="university" name="university">
+                                                        {% for university in uni_list %}
+                                                            <option value="{{ university[0] }}" {% if university[0] == institute[2] %}selected{% endif %}>{{ university[1] }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                -->
+
+                                                <div class="form-group">
+                                                    <label class="form-label" for="type">Type:</label>
+                                                    <select class="form-control" id="type" name="type">
+                                                        <option value="Science" {% if institute[4] == "Science" %}selected{% endif %}>Science</option>
+                                                        <option value="Engineering" {% if institute[4] == "Engineering" %}selected{% endif %}>Engineering</option>
+                                                        <option value="Social Science" {% if institute[4] == "Social Science" %}selected{% endif %}>Social Science</option>
+                                                        <option value="Health Sciences" {% if institute[4] == "Health Sciences" %}selected{% endif %}>Health Sciences</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="form-label" for="year">Year:</label>
+                                                    <input class="form-control" type="number" id="year" name="year" value="{{ institute[5] }}">
+                                                </div>
+
+                                                <div class="form-submit">
+                                                    <input class="btn btn-primary" type="submit" value="Change">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Delete Institute Modal -->
+                            <div class="modal fade" id="deleteInstituteModal{{ institute[0] }}" tabindex="-1" role="dialog" aria-labelledby="deleteInstituteModalLabel{{ institute[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteInstituteModalLabel{{ institute[0] }}">Delete Institute</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete this institute?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form action="/delete_institute/{{ institute[0] }}" method="post">
+                                                <input class="btn btn-danger" type="submit" value="Delete">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+    <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+    <script>
+        institute_list = { institute,tojson };
+    </script>
+    <script src="{{url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

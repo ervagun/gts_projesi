@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css') }}"> 
+</head>
+<body>
+            <!-- Navigation bar -->
+            <nav style="padding: 1.5rem 6rem; font-size: 25px;" class="navbar navbar-expand-sm">
+                <a  style="font-size: 25px;" class="navbar-brand" href="/">GTS</a>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/add_data">Add Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/edit">Editor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">Search</a>
+                    </li>
+     
+                </ul>
+            </nav>
+
+
+    <div class="container">
+        <div class="thesis-search">
+            <h3>Search by Thesis Number</h3>
+            <form action="javascript:void(0);" onsubmit="searchThesisByNumber()">
+                <div class="form-group">
+                    <label class="form-label" for="thesis_id">Thesis Number:</label>
+                    <input class="form-control" type="number" id="thesis_id" name="thesis_id" placeholder="Enter Thesis Number" required>
+                </div>
+                <div class="form-submit">
+                    <input class="btn btn-primary" type="submit" value="Go Thesis">
+                </div>
+            </form>
+        </div>
+
+        
+
+
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+    <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+
+    <!-- Script for changing institute options according to university selection -->
+    <script>
+        institute_list = { institute,tojson };
+    </script>
+    <script src="{{url_for('static', filename='js/main.js') }}"></script>
+
+
+</body>
+</html>
