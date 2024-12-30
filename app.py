@@ -468,6 +468,10 @@ def get_thesis(id):
 def edit():
     conn = get_db_connection()
     cursor = conn.cursor()
+    # get thesis
+    cursor.execute("SELECT ThesisID, Title, ThesisType, Year, Language, PageCount FROM Thesis")
+    thesis = cursor.fetchall()
+
     # get university names 
     cursor.execute("SELECT UniversityID, Name, City, Country, EstablishedYear FROM University")
     universities = cursor.fetchall()
@@ -484,7 +488,7 @@ def edit():
     cursor.execute("SELECT KeywordID, keyword FROM Keyword")
     keywords = cursor.fetchall()
 
-    return render_template('edit.html', universities=universities, institutes=institutes, authors=authors, topics=topics, keywords=keywords)
+    return render_template('edit.html', thesis=thesis, universities=universities, institutes=institutes, authors=authors, topics=topics, keywords=keywords)
 
 
 @app.route('/edit_author/<int:id>', methods=['POST'])
@@ -500,7 +504,7 @@ def edit_author(id):
         cursor.commit()
     except pyodbc.Error as e:
         return render_template('result.html', response=(e), error=True)
-    return render_template('result.html', response="Person updated successfully")
+    return render_template('result.html', response="Author updated successfully")
 
 @app.route('/delete_author/<int:id>', methods=['POST'])
 def delete_author(id):
@@ -508,11 +512,12 @@ def delete_author(id):
     cursor = conn.cursor()
 
     try:
+        cursor.execute("DELETE FROM Thesis WHERE AuthorID = ?", (id,))
         cursor.execute("DELETE FROM Author WHERE AuthorID = ?", (id,))
         cursor.commit()
     except pyodbc.Error as e:
         return render_template('result.html', response=(e), error=True)
-    return render_template('result.html', response="Person deleted successfully")
+    return render_template('result.html', response="Author deleted successfully")
 
 @app.route('/edit_topic/<int:id>', methods=['POST'])
 def edit_topic(id):
@@ -587,6 +592,39 @@ def delete_institute(id):
     except pyodbc.Error as e:
         return render_template('result.html', response=(e), error=True)
     return render_template('result.html', response="Institute deleted successfully")
+
+@app.route('/edit_thesis/<int:id>', methods=['POST'])
+def edit_thesis(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    title = request.form.get('title')
+    type = request.form.get('type')
+    year = request.form.get('year')
+    language = request.form.get('language')
+    pagecount = request.form.get('pagecount')
+
+    try:
+        cursor.execute("UPDATE Thesis SET Title = ?, ThesisType = ?, Year = ?, Language = ?, PageCount = ? WHERE ThesisID = ?", (title, type, year, language, pagecount, id))
+        cursor.commit()
+    except pyodbc.Error as e:
+        return render_template('result.html', response=(e), error=True)
+    return render_template('result.html', response="Thesis updated successfully")
+
+@app.route('/delete_thesis/<int:id>', methods=['POST'])
+def delete_thesis(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM ThesisKeyword WHERE ThesisID = ?", (id,))
+        cursor.commit()
+        cursor.execute("DELETE FROM ThesisSubjectTopic WHERE ThesisID = ?", (id,))
+        cursor.commit()
+        cursor.execute("DELETE FROM Thesis WHERE ThesisID = ?", (id,))
+        cursor.commit()
+    except pyodbc.Error as e:
+        return render_template('result.html', response=(e), error=True)
+    return render_template('result.html', response="Thesis deleted successfully")
 
 # Flask uygulamasını çalıştırma
 if __name__ == '__main__':
